@@ -7,9 +7,9 @@ import (
 
 func TestService_Card2Card(t *testing.T) {
 	type fields struct {
-		CardSvc       *card.Service
-		Commission    float64
-		MinCommission int64
+		CardSvc           *card.Service
+		CommissionPercent float64
+		MinCommission     int64
 	}
 	type args struct {
 		from   string
@@ -32,42 +32,42 @@ func TestService_Card2Card(t *testing.T) {
 		// TODO: Add test cases.
 		{
 			name:      "Карта своего банка -> Карта своего банка (денег достаточно)",
-			fields:    fields{ CardSvc: cardSvc, Commission: 10, MinCommission: 10_00},
+			fields:    fields{ CardSvc: cardSvc, CommissionPercent: 10, MinCommission: 10_00},
 			args:      args{from: "4539076789382977", to: "4844649384305716", amount: 50_00},
 			wantTotal: 5500,
 			wantOk:    true,
 		},
 		{
 			name:      "Карта своего банка -> Карта своего банка (денег недостаточно)",
-			fields:    fields{ CardSvc: cardSvc, Commission: 10, MinCommission: 10_00},
+			fields:    fields{ CardSvc: cardSvc, CommissionPercent: 10, MinCommission: 10_00},
 			args:      args{from: "4485294233758740055", to: "5594089900819313", amount: 50_00},
 			wantTotal: 5500,
 			wantOk:    false,
 		},
 		{
 			name:      "Карта своего банка -> Карта чужого банка (денег достаточно)",
-			fields:    fields{ CardSvc: cardSvc, Commission: 10, MinCommission: 10_00},
+			fields:    fields{ CardSvc: cardSvc, CommissionPercent: 10, MinCommission: 10_00},
 			args:      args{from: "4539076789382977", to: "4844649384305717", amount: 50_00},
 			wantTotal: 5500,
 			wantOk:    true,
 		},
 		{
 			name:      "Карта своего банка -> Карта чужого банка (денег недостаточно)",
-			fields:    fields{ CardSvc: cardSvc, Commission: 10, MinCommission: 10_00},
+			fields:    fields{ CardSvc: cardSvc, CommissionPercent: 10, MinCommission: 10_00},
 			args:      args{from: "4485294233758740055", to: "5594089900819318", amount: 50_00},
 			wantTotal: 5500,
 			wantOk:    false,
 		},
 		{
 			name:      "Карта чужого банка -> Карта своего банка",
-			fields:    fields{ CardSvc: cardSvc, Commission: 10, MinCommission: 10_00},
+			fields:    fields{ CardSvc: cardSvc, CommissionPercent: 10, MinCommission: 10_00},
 			args:      args{from: "45390767893829778", to: "4844649384305716", amount: 50_00},
 			wantTotal: 5500,
 			wantOk:    true,
 		},
 		{
 			name:      "Карта чужого банка -> Карта чужого банка",
-			fields:    fields{ CardSvc: cardSvc, Commission: 10, MinCommission: 10_00},
+			fields:    fields{ CardSvc: cardSvc, CommissionPercent: 10, MinCommission: 10_00},
 			args:      args{from: "45390767893829778", to: "48446493843057166", amount: 50_00},
 			wantTotal: 5500,
 			wantOk:    true,
@@ -77,7 +77,7 @@ func TestService_Card2Card(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := &Service{
 				CardSvc:       tt.fields.CardSvc,
-				Commission:    tt.fields.Commission,
+				Commission:    tt.fields.CommissionPercent,
 				MinCommission: tt.fields.MinCommission,
 			}
 			gotTotal, gotOk := s.Card2Card(tt.args.from, tt.args.to, tt.args.amount)

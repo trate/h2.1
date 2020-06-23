@@ -1,7 +1,6 @@
 package transfer
 
 import (
-	"fmt"
 	"github.com/trate/h2.1/pkg/card"
 )
 
@@ -13,8 +12,8 @@ type Service struct {
 	MinCommission int64
 }
 
-func NewService(cardSvc *card.Service, commission float64, minCommission int64) *Service {
-	return &Service{ CardSvc: cardSvc, Commission: commission, MinCommission: minCommission}
+func NewService(cardSvc *card.Service, commissionPercent float64, minCommission int64) *Service {
+	return &Service{ CardSvc: cardSvc, Commission: commissionPercent, MinCommission: minCommission}
 }
 
 func (s *Service) Card2Card(from, to string, amount int64) (total int64, ok bool) {
@@ -23,8 +22,6 @@ func (s *Service) Card2Card(from, to string, amount int64) (total int64, ok bool
 
 	fromCard = s.CardSvc.FindCard(from)
 	toCard = s.CardSvc.FindCard(to)
-	fmt.Println(fromCard)
-	fmt.Println(toCard)
 
 	commission := s.Commission / 100
 	withdraw := float64(amount) + commission * float64(amount)
