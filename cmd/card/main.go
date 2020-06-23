@@ -26,17 +26,15 @@ func main() {
 	}
 
 	tinkoff := card.NewService("Tinkoff")
-	tinkoffTransfers := transfer.NewService(tinkoff, 0.05, 10_00)
+	tinkoffTransfers := transfer.NewService(tinkoff, 0.5, 10_00)
 
 	tinkoff.Cards = append(tinkoff.Cards, master)
 	tinkoff.Cards = append(tinkoff.Cards, visa)
 
-	fmt.Println(tinkoff, *(tinkoff.Cards[0]))
 
 	total, ok := tinkoffTransfers.Card2Card("5177827685644009", "4716742265786594", 50_00 )
 
 	fmt.Println(total, ok)
 
-	fmt.Println(tinkoff, *(tinkoff.Cards[0]), *(tinkoff.Cards[1]))
 
 }
