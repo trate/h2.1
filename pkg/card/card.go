@@ -26,13 +26,13 @@ func NewService(bankName string) *Service {
 	return &Service{BankName: bankName}
 }
 
-func (s *Service) FindCard(number string) *Card {
+func (s *Service) FindCard(number string) (*Card, bool) {
 	for _, v := range s.Cards {
 		if v.Number == number {
-			return v
+			return v, true
 		}
 	}
-	return nil
+	return nil, false
 }
 
 func (s *Service) Add(cards ...*Card) {

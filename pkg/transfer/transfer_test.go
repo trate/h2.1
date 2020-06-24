@@ -27,50 +27,35 @@ func TestService_Card2Card(t *testing.T) {
 		fields    fields
 		args      args
 		wantTotal int64
-		wantOk    bool
+		wantError error
 	}{
-		// TODO: Add test cases.
 		{
 			name:      "Карта своего банка -> Карта своего банка (денег достаточно)",
-			fields:    fields{ CardSvc: cardSvc, CommissionPercent: 10, MinCommission: 10_00},
+			fields:    fields{CardSvc: cardSvc, CommissionPercent: 10, MinCommission: 10_00},
 			args:      args{from: "4539076789382977", to: "4844649384305716", amount: 50_00},
 			wantTotal: 5500,
-			wantOk:    true,
+			wantError: nil,
 		},
 		{
 			name:      "Карта своего банка -> Карта своего банка (денег недостаточно)",
-			fields:    fields{ CardSvc: cardSvc, CommissionPercent: 10, MinCommission: 10_00},
+			fields:    fields{CardSvc: cardSvc, CommissionPercent: 10, MinCommission: 10_00},
 			args:      args{from: "4485294233758740055", to: "5594089900819313", amount: 50_00},
 			wantTotal: 5500,
-			wantOk:    false,
+			wantError: ErrSourceCardBalanceNotEnough,
 		},
 		{
-			name:      "Карта своего банка -> Карта чужого банка (денег достаточно)",
-			fields:    fields{ CardSvc: cardSvc, CommissionPercent: 10, MinCommission: 10_00},
+			name:      "Карта своего банка -> Карта не найдена",
+			fields:    fields{CardSvc: cardSvc, CommissionPercent: 10, MinCommission: 10_00},
 			args:      args{from: "4539076789382977", to: "4844649384305717", amount: 50_00},
 			wantTotal: 5500,
-			wantOk:    true,
+			wantError: ErrTargetCardNotFound,
 		},
 		{
-			name:      "Карта своего банка -> Карта чужого банка (денег недостаточно)",
-			fields:    fields{ CardSvc: cardSvc, CommissionPercent: 10, MinCommission: 10_00},
-			args:      args{from: "4485294233758740055", to: "5594089900819318", amount: 50_00},
-			wantTotal: 5500,
-			wantOk:    false,
-		},
-		{
-			name:      "Карта чужого банка -> Карта своего банка",
-			fields:    fields{ CardSvc: cardSvc, CommissionPercent: 10, MinCommission: 10_00},
+			name:      "Карта не найдена -> Карта своего банка",
+			fields:    fields{CardSvc: cardSvc, CommissionPercent: 10, MinCommission: 10_00},
 			args:      args{from: "45390767893829778", to: "4844649384305716", amount: 50_00},
 			wantTotal: 5500,
-			wantOk:    true,
-		},
-		{
-			name:      "Карта чужого банка -> Карта чужого банка",
-			fields:    fields{ CardSvc: cardSvc, CommissionPercent: 10, MinCommission: 10_00},
-			args:      args{from: "45390767893829778", to: "48446493843057166", amount: 50_00},
-			wantTotal: 5500,
-			wantOk:    true,
+			wantError: ErrSourceCardNotFound,
 		},
 	}
 	for _, tt := range tests {
@@ -84,8 +69,8 @@ func TestService_Card2Card(t *testing.T) {
 			if gotTotal != tt.wantTotal {
 				t.Errorf("Card2Card() gotTotal = %v, want %v", gotTotal, tt.wantTotal)
 			}
-			if gotOk != tt.wantOk {
-				t.Errorf("Card2Card() gotOk = %v, want %v", gotOk, tt.wantOk)
+			if gotOk != tt.wantError {
+				t.Errorf("Card2Card() gotOk = %v, want %v", gotOk, tt.wantError)
 			}
 		})
 	}

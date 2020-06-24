@@ -31,10 +31,8 @@ func main() {
 	tinkoff.Cards = append(tinkoff.Cards, master)
 	tinkoff.Cards = append(tinkoff.Cards, visa)
 
-
-	total, ok := tinkoffTransfers.Card2Card("5177827685644009", "4716742265786594", 50_00 )
+	total, ok := tinkoffTransfers.Card2Card("5177827685644009", "4716742265786594", 50_00)
 
 	fmt.Println(total, ok)
-
 
 }
