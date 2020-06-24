@@ -31,8 +31,21 @@ func main() {
 	tinkoff.Cards = append(tinkoff.Cards, master)
 	tinkoff.Cards = append(tinkoff.Cards, visa)
 
-	total, ok := tinkoffTransfers.Card2Card("5177827685644009", "4716742265786594", 50_00)
+	total, err := tinkoffTransfers.Card2Card("5177827685644009", "4716742265786594", 50_00)
 
-	fmt.Println(total, ok)
+	if err != nil {
+		switch err {
+		case transfer.ErrSourceCardBalanceNotEnough:
+			fmt.Println("Sorry, can't complete transaction")
+		case transfer.ErrTargetCardNotFound:
+			fmt.Println("Please check target card number")
+		case transfer.ErrSourceCardBalanceNotEnough:
+			fmt.Println("Your account has insufficient funds")
+		default:
+			fmt.Println("Something bad happened. Try again later")
+		}
+	}
+
+	fmt.Println(total)
 
 }
