@@ -1,7 +1,16 @@
 package transfer
 
 import (
+	"errors"
 	"github.com/trate/h2.1/pkg/card"
+)
+
+var (
+	ErrSourceCardBalanceNotEnough = errors.New("source card balance is not enough for the operation")
+	ErrSourceCardNotFound         = errors.New("source card not found")
+	ErrTargetCardNotFound         = errors.New("target card not found")
+	ErrInvalidSourceCardNumber    = errors.New("invalid source card number")
+	ErrInvalidTargetCardNumber    = errors.New("invalid target card number")
 )
 
 type Service struct {
@@ -13,43 +22,52 @@ type Service struct {
 }
 
 func NewService(cardSvc *card.Service, commissionPercent float64, minCommission int64) *Service {
-	return &Service{ CardSvc: cardSvc, Commission: commissionPercent, MinCommission: minCommission}
+	return &Service{CardSvc: cardSvc, Commission: commissionPercent, MinCommission: minCommission}
 }
 
-func (s *Service) Card2Card(from, to string, amount int64) (total int64, ok bool) {
+// dummy function for testing Luhn's algorithm
+func Transfer(from, to string) error {
+	if ok := card.IsValid(from); !ok {
+		return ErrInvalidSourceCardNumber
+	}
+	if ok := card.IsValid(to); !ok {
+		return ErrInvalidTargetCardNumber
+	}
+	return nil
+}
+
+func (s *Service) Card2Card(from, to string, amount int64) (int64, error) {
 	var fromCard *card.Card
 	var toCard *card.Card
 
-	fromCard = s.CardSvc.FindCard(from)
-	toCard = s.CardSvc.FindCard(to)
-
 	commission := s.Commission / 100
-	withdraw := float64(amount) + commission * float64(amount)
-	total = int64(withdraw)
+	withdraw := float64(amount) + commission*float64(amount)
+	total := int64(withdraw)
+
+	fromCard, ok := s.CardSvc.FindCard(from)
+	if !ok {
+		return total, ErrSourceCardNotFound
+	}
+
+	toCard, ok = s.CardSvc.FindCard(to)
+	if !ok {
+		return total, ErrTargetCardNotFound
+	}
+
 	if withdraw < float64(s.MinCommission) {
 		withdraw = float64(s.MinCommission)
 	}
 
-	if fromCard == nil && toCard == nil {
-		ok = true
-		return
-	}
-
 	if fromCard != nil && withdraw >= float64(fromCard.Balance) {
-		ok = false
-		return
+		return total, ErrSourceCardBalanceNotEnough
 	}
 
 	if fromCard != nil {
 		fromCard.Balance = fromCard.Balance - int64(withdraw)
-		ok = true
 	}
 
-	if  toCard != nil {
+	if toCard != nil {
 		toCard.Balance = toCard.Balance + amount
-		ok = true
 	}
-	return
+	return total, nil
 }
-
-
