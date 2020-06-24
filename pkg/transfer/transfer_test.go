@@ -18,8 +18,8 @@ func TestService_Card2Card(t *testing.T) {
 	}
 	cardSvc := card.NewService("Tinkoff")
 	cardSvc.Add(
-		&card.Card{Balance: 65_000, Number: "4539076789382977"}, &card.Card{Balance: 64_000, Number: "4844649384305716"},
-		&card.Card{Balance: 4_000, Number: "4485294233758740055"}, &card.Card{Balance: 34_000, Number: "5594089900819313"},
+		&card.Card{Balance: 65_000, Number: "5106216789382977"}, &card.Card{Balance: 64_000, Number: "5106219384305716"},
+		&card.Card{Balance: 4_000, Number: "5106214233758740055"}, &card.Card{Balance: 34_000, Number: "5106219900819313"},
 	)
 
 	tests := []struct {
@@ -32,28 +32,28 @@ func TestService_Card2Card(t *testing.T) {
 		{
 			name:      "Карта своего банка -> Карта своего банка (денег достаточно)",
 			fields:    fields{CardSvc: cardSvc, CommissionPercent: 10, MinCommission: 10_00},
-			args:      args{from: "4539076789382977", to: "4844649384305716", amount: 50_00},
+			args:      args{from: "5106216789382977", to: "5106219384305716", amount: 50_00},
 			wantTotal: 5500,
 			wantError: nil,
 		},
 		{
 			name:      "Карта своего банка -> Карта своего банка (денег недостаточно)",
 			fields:    fields{CardSvc: cardSvc, CommissionPercent: 10, MinCommission: 10_00},
-			args:      args{from: "4485294233758740055", to: "5594089900819313", amount: 50_00},
+			args:      args{from: "5106214233758740055", to: "5106219900819313", amount: 50_00},
 			wantTotal: 5500,
 			wantError: ErrSourceCardBalanceNotEnough,
 		},
 		{
 			name:      "Карта своего банка -> Карта не найдена",
 			fields:    fields{CardSvc: cardSvc, CommissionPercent: 10, MinCommission: 10_00},
-			args:      args{from: "4539076789382977", to: "4844649384305717", amount: 50_00},
+			args:      args{from: "5106216789382977", to: "5106219384305717", amount: 50_00},
 			wantTotal: 5500,
 			wantError: ErrTargetCardNotFound,
 		},
 		{
 			name:      "Карта не найдена -> Карта своего банка",
 			fields:    fields{CardSvc: cardSvc, CommissionPercent: 10, MinCommission: 10_00},
-			args:      args{from: "45390767893829778", to: "4844649384305716", amount: 50_00},
+			args:      args{from: "51062167893829778", to: "5106219384305716", amount: 50_00},
 			wantTotal: 5500,
 			wantError: ErrSourceCardNotFound,
 		},

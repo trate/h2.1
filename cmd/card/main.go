@@ -13,7 +13,7 @@ func main() {
 		Issuer:       "MasterCard",
 		Balance:      65_000,
 		Currency:     "RUB",
-		Number:       "5177827685644009",
+		Number:       "5106217685644009",
 		Transactions: nil,
 	}
 	visa := &card.Card{
@@ -21,7 +21,7 @@ func main() {
 		Issuer:       "Visa",
 		Balance:      64_000,
 		Currency:     "RUB",
-		Number:       "4716742265786594",
+		Number:       "5106212265786594",
 		Transactions: nil,
 	}
 
@@ -31,7 +31,7 @@ func main() {
 	tinkoff.Cards = append(tinkoff.Cards, master)
 	tinkoff.Cards = append(tinkoff.Cards, visa)
 
-	total, err := tinkoffTransfers.Card2Card("5177827685644009", "4716742265786594", 50_00)
+	total, err := tinkoffTransfers.Card2Card("5106217685644009", "5106212265786594", 50_00)
 
 	if err != nil {
 		switch err {
