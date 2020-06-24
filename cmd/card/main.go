@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/trate/h2.1/pkg/card"
 	"github.com/trate/h2.1/pkg/transfer"
+	"log"
 )
 
 func main() {
@@ -47,5 +48,13 @@ func main() {
 	}
 
 	fmt.Println(total)
+	fmt.Println("Check that the cards numbers are valid...")
 
+	from := "4556132133759481"
+	to := "4024007104767800"
+	err = transfer.Transfer(from, to)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	fmt.Println(from, to, "are valid")
 }

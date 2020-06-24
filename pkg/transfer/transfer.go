@@ -9,6 +9,8 @@ var (
 	ErrSourceCardBalanceNotEnough = errors.New("source card balance is not enough for the operation")
 	ErrSourceCardNotFound         = errors.New("source card not found")
 	ErrTargetCardNotFound         = errors.New("target card not found")
+	ErrInvalidSourceCardNumber    = errors.New("invalid source card number")
+	ErrInvalidTargetCardNumber    = errors.New("invalid target card number")
 )
 
 type Service struct {
@@ -21,6 +23,17 @@ type Service struct {
 
 func NewService(cardSvc *card.Service, commissionPercent float64, minCommission int64) *Service {
 	return &Service{CardSvc: cardSvc, Commission: commissionPercent, MinCommission: minCommission}
+}
+
+// dummy function for testing Luhn's algorithm
+func Transfer(from, to string) error {
+	if ok := card.IsValid(from); !ok {
+		return ErrInvalidSourceCardNumber
+	}
+	if ok := card.IsValid(to); !ok {
+		return ErrInvalidTargetCardNumber
+	}
+	return nil
 }
 
 func (s *Service) Card2Card(from, to string, amount int64) (int64, error) {
